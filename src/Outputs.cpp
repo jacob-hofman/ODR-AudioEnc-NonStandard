@@ -235,9 +235,9 @@ bool EDI::write_frame(const uint8_t *buf, size_t len)
     edi_tagPayload.istd_data = buf;
     edi_tagPayload.istd_length = len;
 
-    edi::TagODRAudioLevels edi_tagAudioLevels(m_audio_left, m_audio_right);
+    edi::TagODRAudioLevels edi_tagAudioLevels(m_audio_left, m_audio_right, m_itel_version);
 
-    edi::TagODRVersion edi_tagVersion(m_odr_version_tag, m_num_seconds_sent);
+    edi::TagODRVersion edi_tagVersion(m_odr_version_tag, m_num_seconds_sent, m_itel_version);
 
     // The above Tag Items will be assembled into a TAG Packet
     edi::TagPacket edi_tagpacket(m_edi_conf.tagpacket_alignment);
@@ -260,4 +260,8 @@ bool EDI::write_frame(const uint8_t *buf, size_t len)
     return true;
 }
 
+void EDI::set_itel_version(int itel_version)
+{
+    m_itel_version = itel_version;
+}
 }

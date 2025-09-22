@@ -378,18 +378,30 @@ std::vector<uint8_t> TagStarDMY::Assemble()
     return packet;
 }
 
-TagODRVersion::TagODRVersion(const std::string& version, uint32_t uptime_s) :
+TagODRVersion::TagODRVersion(const std::string& version, uint32_t uptime_s, uint32_t itel_version) :
     m_version(version),
-    m_uptime(uptime_s)
+    m_uptime(uptime_s),
+    m_itel_version(itel_version)
 {
 }
 
 std::vector<uint8_t> TagODRVersion::Assemble()
 {
     std::string pack_data("ODRv");
+    if (m_itel_version > 0) {
+        pack_data = "ENCv";
+    }
+
     std::vector<uint8_t> packet(pack_data.begin(), pack_data.end());
 
-    const size_t length = m_version.size() + sizeof(uint32_t);
+    std::string version = m_version;
+    if (m_itel_version == 5) {
+        version = "ITEL-DabEnc-v5 ";
+    } else if (m_itel_version == 6) {
+        version = "ITEL-DabEnc-v6 ";
+    }
+
+    const size_t length = version.size() + sizeof(uint32_t);
 
     packet.resize(4 + 4 + length);
 
@@ -401,8 +413,8 @@ std::vector<uint8_t> TagODRVersion::Assemble()
     packet[i++] = (length_bits >> 8) & 0xFF;
     packet[i++] = length_bits & 0xFF;
 
-    copy(m_version.cbegin(), m_version.cend(), packet.begin() + i);
-    i += m_version.size();
+    copy(version.cbegin(), version.cend(), packet.begin() + i);
+    i += version.size();
 
     packet[i++] = (m_uptime >> 24) & 0xFF;
     packet[i++] = (m_uptime >> 16) & 0xFF;
@@ -412,15 +424,19 @@ std::vector<uint8_t> TagODRVersion::Assemble()
     return packet;
 }
 
-TagODRAudioLevels::TagODRAudioLevels(int16_t audiolevel_left, int16_t audiolevel_right) :
+TagODRAudioLevels::TagODRAudioLevels(int16_t audiolevel_left, int16_t audiolevel_right, uint32_t itel_version) :
     m_audio_left(audiolevel_left),
-    m_audio_right(audiolevel_right)
+    m_audio_right(audiolevel_right),
+    m_itel_version(itel_version)
 {
 }
 
 std::vector<uint8_t> TagODRAudioLevels::Assemble()
 {
     std::string pack_data("ODRa");
+    if (m_itel_version > 0) {
+        pack_data = "ENCa";
+    }
     std::vector<uint8_t> packet(pack_data.begin(), pack_data.end());
 
     constexpr size_t length = 2*sizeof(int16_t);

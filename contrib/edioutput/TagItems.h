@@ -230,24 +230,26 @@ class TagStarDMY : public TagItem
 class TagODRVersion : public TagItem
 {
     public:
-        TagODRVersion(const std::string& version, uint32_t uptime_s);
+        TagODRVersion(const std::string& version, uint32_t uptime_s, uint32_t itel_version=0);
         std::vector<uint8_t> Assemble();
 
     private:
         std::string m_version;
         uint32_t m_uptime;
+        int m_itel_version = 0;
 };
 
 // Custom TAG that carries audio level metadata
 class TagODRAudioLevels : public TagItem
 {
     public:
-        TagODRAudioLevels(int16_t audiolevel_left, int16_t audiolevel_right);
+        TagODRAudioLevels(int16_t audiolevel_left, int16_t audiolevel_right, uint32_t itel_version=0);
         std::vector<uint8_t> Assemble();
 
     private:
         int16_t m_audio_left;
         int16_t m_audio_right;
+        int m_itel_version = 0;
 };
 
 }

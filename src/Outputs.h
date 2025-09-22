@@ -146,6 +146,8 @@ class EDI: public Base {
 
         virtual bool write_frame(const uint8_t *buf, size_t len) override;
 
+        void set_itel_version(int itel_version);
+
     private:
         std::string m_odr_version_tag;
 
@@ -162,6 +164,7 @@ class EDI: public Base {
         ClockTAI m_clock_tai;
         bool m_tist = false;
         uint32_t m_delay_ms = 0;
+        int m_itel_version = 0;
 };
 
 }
